@@ -25,7 +25,7 @@ type Split<T extends string, S extends string = "."> =
 		: [T];
 
 
-export type Path = [Segment, ...Segment[]];
+export type Path = readonly [Segment, ...Segment[]];
 
 
 export type InferAt<
@@ -78,10 +78,10 @@ export function selectSchemaAt<
 	P extends Path | string
 >(schema: T, path: P): SchemaAt<T, P> {
 	const arrayPath = typeof path === "string" ? path.split(".") : path;
-	const [segment, ...rest] = arrayPath;
+	const [segment, ...rest] = arrayPath as Path;
 
 	const select = (childSchema: ZodTypeAny): any =>
-		rest.length ? selectSchemaAt(childSchema, rest as Path) : childSchema;
+		rest.length ? selectSchemaAt(childSchema, rest as unknown as Path) : childSchema;
 
 	if (isZodTuple(schema)) {
 		if (!isTupleIndex(segment)) {
